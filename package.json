@@ -22,21 +22,24 @@
     "@types/react-dom": "16.0.5",
     "@types/webpack-env": "1.13.1",
     "chai": "^4.2.0",
+    "jquery": "^3.5.1",
     "mocha": "^5.2.0",
     "react": "16.3.2",
-    "react-dom": "16.3.2"
+    "react-dom": "16.3.2",
+    "react-horizontal-scrolling-menu": "^0.7.8"
   },
   "resolutions": {
     "@types/react": "16.4.2"
   },
   "devDependencies": {
     "@microsoft/sp-build-web": "1.7.1",
-    "@microsoft/sp-tslint-rules": "1.7.1",
     "@microsoft/sp-module-interfaces": "1.7.1",
+    "@microsoft/sp-tslint-rules": "1.7.1",
     "@microsoft/sp-webpart-workbench": "1.7.1",
-    "gulp": "~3.9.1",
     "@types/chai": "3.4.34",
+    "@types/jquery": "^3.5.3",
     "@types/mocha": "2.2.38",
-    "ajv": "~5.2.2"
+    "ajv": "~5.2.2",
+    "gulp": "~3.9.1"
   }
 }

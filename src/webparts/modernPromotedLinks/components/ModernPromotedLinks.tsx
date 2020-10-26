@@ -6,168 +6,194 @@ import { Placeholder } from '@pnp/spfx-controls-react/lib/Placeholder';
 import ModernPromotedLinkItem, { IModernPromotedLinkItemProps } from './ModernPromotedLinkItem';
 import { escape } from '@microsoft/sp-lodash-subset';
 import { SPHttpClient } from '@microsoft/sp-http';
-
+// Se añaden imports para crear la lista horizontal
+import * as $ from 'jquery';
 
 export interface IModernPromotedLinksState {
-  listData: IModernPromotedLinkDataItem[];
-  loading?: boolean;
-  showPlaceholder?: boolean;
+    listData: IModernPromotedLinkDataItem[];
+    loading?: boolean;
+    showPlaceholder?: boolean;
+    scrollMove: Number;
 }
 
 export default class ModernPromotedLinks extends React.Component<IModernPromotedLinksProps, IModernPromotedLinksState> {
 
-  constructor(props: IModernPromotedLinksProps, state: IModernPromotedLinksState) {
-    super(props);
+    constructor(props: IModernPromotedLinksProps, state: IModernPromotedLinksState) {
+        super(props);
 
-    this._onConfigure = this._onConfigure.bind(this);
+        this._onConfigure = this._onConfigure.bind(this);
 
-    this.state = { 
-      listData: [],
-      loading: false,
-      showPlaceholder: (this.props.lists === null || this.props.lists === ""),
-    };
-  }
-
-  /*
-   * Opens the web part property pane
-  */
- private _onConfigure() {
-  this.props.context.propertyPane.open();
-}
-
-  public render(): React.ReactElement<IModernPromotedLinksProps> {
-
-    if (this.state.showPlaceholder) {
-      // Check if placeholder needs to be shown
-      return (
-        <Placeholder
-          iconName="Edit"
-          iconText="Promoted links web part configuration"
-          description="Please configure the web part before you can show the promoted links."
-          buttonLabel="Configure"
-          onConfigure={this._onConfigure}/>
-      );
+        this.state = {
+            listData: [],
+            loading: false,
+            showPlaceholder: (this.props.lists === null || this.props.lists === ""),
+            scrollMove: 750
+        };
     }
 
-    return (
-      <div className={styles.modernPromotedLinks}>
-      <div >
-        <h2>{this.props.description}</h2>
-      </div>
-      {
-          this.state.loading ?
-            (
-              <Spinner size={SpinnerSize.large} label="Retrieving results ..." />
-            ) : (
-              this.state.listData.length === 0 ?
-                (
-                  <Placeholder
-                    iconName="InfoSolid"
-                    iconText="No items found"
-                    description="The Promoted links list you selected does not contain items."
-                  />
-                ) : (
+    /*
+     * Opens the web part property pane
+    */
+    private _onConfigure() {
+        this.props.context.propertyPane.open();
+    }
 
-        <div className={styles.container}>
-          {
-            this.state.listData.map((item: IModernPromotedLinkDataItem) => {
-              return <ModernPromotedLinkItem
-                title={item.Title}
-                description={item.Description}
-                imageUrl={item.ImageUrl}
-                href={item.LinkUrl}
-                launchbehavior={item.LaunchBehavior}
-                 />;   
-            })
-          }
-          <div style={{ clear: 'both' }}></div>
-        </div>
-                )
-                )
+    public render(): React.ReactElement<IModernPromotedLinksProps> {
+
+        if (this.state.showPlaceholder) {
+            // Check if placeholder needs to be shown
+            return (
+                <Placeholder
+                    iconName="Edit"
+                    iconText="Promoted links web part configuration"
+                    description="Please configure the web part before you can show the promoted links."
+                    buttonLabel="Configure"
+                    onConfigure={this._onConfigure} />
+            );
         }
-      </div>
-    );
-  }
 
-  public componentDidMount(): void {
-    if (this.props.lists !== null && this.props.lists !== "") {
-    this.loadData();
+        return (
+            <div className={styles.modernPromotedLinks}>
+                {
+                    this.state.loading ?
+                        (
+                            <Spinner size={SpinnerSize.large} label="Retrieving results ..." />
+                        ) : (
+                            this.state.listData.length === 0 ?
+                                (
+                                    <Placeholder
+                                        iconName="InfoSolid"
+                                        iconText="No items found"
+                                        description="The Promoted links list you selected does not contain items."
+                                    />
+                                ) : (
+                                    <div>
+                                        <div>
+                                            <div className={styles.dInlineBlock}>
+                                                <h3 className={styles.webpartTitle}>{this.props.description}</h3>
+                                            </div>
+                                            <div className={`${styles.dInlineBlock} ${styles.fRight}`}>
+                                                <i id={"btnMoveScrollLeft"} className={`${styles.arrow} ${styles.left}`}></i>
+                                                <i id={"btnMoveScrollRigth"} className={`${styles.arrow} ${styles.right}`}></i>
+                                            </div>
+                                        </div>
+                                        {/* <button id={"btnMoveScrollRigth"}>derecha</button> */}
+                                        <div id={"promotedListContainer"} className={`${styles.modernPromotedLinkContainer} ${styles.promotedListContainer}`}>
+                                            {
+                                                this.state.listData.map((item: IModernPromotedLinkDataItem) => {
+                                                    return <ModernPromotedLinkItem
+                                                        title={item.Title}
+                                                        description={item.Description}
+                                                        imageUrl={item.ImageUrl}
+                                                        href={item.LinkUrl}
+                                                        launchbehavior={item.LaunchBehavior}
+                                                    />;
+                                                })
+                                            }
+                                            <div style={{ clear: 'both' }}></div>
+                                        </div>
+                                        {/* <button id={"btnMoveScrollLeft"}>izquierda</button> */}
+                                    </div>
+
+                                )
+                        )
+                }
+            </div>
+        );
     }
-  }
 
-  public componentDidUpdate(prevProps: IModernPromotedLinksProps, prevState: IModernPromotedLinksState, prevContext: any) {
-    if (prevProps.lists != this.props.lists) {
-      if (this.props.lists !== null && this.props.lists !== "") {
-        this.loadData();
-      } else {
+    public componentDidMount(): void {
+        if (this.props.lists !== null && this.props.lists !== "") {
+            this.loadData();
+        }
+    }
+
+    public componentDidUpdate(prevProps: IModernPromotedLinksProps, prevState: IModernPromotedLinksState, prevContext: any) {
+        if (prevProps.lists != this.props.lists) {
+            if (this.props.lists !== null && this.props.lists !== "") {
+                this.loadData();
+            } else {
+                this.setState({
+                    showPlaceholder: true
+                });
+            }
+        }
+        $('#btnMoveScrollRigth').click(() => {
+            event.preventDefault();
+            $('#promotedListContainer').animate({
+                scrollLeft: `+=${this.state.scrollMove}px`
+            }, "slow");
+        });
+
+        $('#btnMoveScrollLeft').click(() => {
+            event.preventDefault();
+            $('#promotedListContainer').animate({
+                scrollLeft: `-=${this.state.scrollMove}px`
+            }, "slow");
+        });
+    }
+
+    private loadData(): void {
+
         this.setState({
-          showPlaceholder: true
+            loading: true
         });
-      }
-    }
-  }
 
-  private loadData(): void {
-
-    this.setState({
-      loading: true
-    });
-
-    if (this.props.isWorkbench) {
-      // get mock data in Workbench
-      this.setState({
-        listData: [
-          {
-            Title: "Test Item",
-            Description: "Test description",
-            ImageUrl: "https://media-cdn.tripadvisor.com/media/photo-s/04/a8/17/f5/el-arco.jpg",
-            LinkUrl: "http://www.google.com",
-            LaunchBehavior: "_blank"
-          },
-          {
-            Title: "Test Item with a Long Title",
-            Description: "Test description",
-            ImageUrl: "https://pgcpsmess.files.wordpress.com/2014/04/330277-red-fox-kelly-lyon-760x506.jpg",
-            LinkUrl: "http://www.google.com",
-            LaunchBehavior: "_blank"
-          },
-          {
-            Title: "Test Item",
-            Description: "Test item with a long description for display",
-            ImageUrl: "https://s-media-cache-ak0.pinimg.com/736x/d6/d4/d7/d6d4d7224687ca3de4a160f5264b5b99.jpg",
-            LinkUrl: "http://www.google.com_open.",
-            LaunchBehavior: "_blank"
-          }
-        ]
-      });
-    } else {
-      // get data from SharePoint
-      this.props.spHttpClient.get(`${this.props.siteUrl}/_api/Web/Lists(guid'${this.props.lists}')/Items`, SPHttpClient.configurations.v1)
-      .then(response => {
-        return response.json();
-      })
-      .then((items: any) => {
-         // console.log(items);
-        const listItems: IModernPromotedLinkDataItem[] = [];
-        for (let i: number = 0; i < items.value.length; i++) {
-          listItems.push({
-            Title: items.value[i].Title,
-            Description: items.value[i].Description,
-            ImageUrl: items.value[i].BackgroundImageLocation.Url,
-            LinkUrl: items.value[i].LinkLocation.Url,
-            LaunchBehavior: items.value[i].LaunchBehavior
-          });
+        if (this.props.isWorkbench) {
+            // get mock data in Workbench
+            this.setState({
+                listData: [
+                    {
+                        Title: "Test Item",
+                        Description: "Test description",
+                        ImageUrl: "https://media-cdn.tripadvisor.com/media/photo-s/04/a8/17/f5/el-arco.jpg",
+                        LinkUrl: "http://www.google.com",
+                        LaunchBehavior: "_blank"
+                    },
+                    {
+                        Title: "Test Item with a Long Title",
+                        Description: "Test description",
+                        ImageUrl: "https://pgcpsmess.files.wordpress.com/2014/04/330277-red-fox-kelly-lyon-760x506.jpg",
+                        LinkUrl: "http://www.google.com",
+                        LaunchBehavior: "_blank"
+                    },
+                    {
+                        Title: "Test Item",
+                        Description: "Test item with a long description for display",
+                        ImageUrl: "https://s-media-cache-ak0.pinimg.com/736x/d6/d4/d7/d6d4d7224687ca3de4a160f5264b5b99.jpg",
+                        LinkUrl: "http://www.google.com_open.",
+                        LaunchBehavior: "_blank"
+                    }
+                ]
+            });
+        } else {
+            // get data from SharePoint
+            this.props.spHttpClient.get(`${this.props.siteUrl}/_api/Web/Lists(guid'${this.props.lists}')/Items`, SPHttpClient.configurations.v1)
+                .then(response => {
+                    return response.json();
+                })
+                .then((items: any) => {
+                    // console.log(items);
+                    const listItems: IModernPromotedLinkDataItem[] = [];
+                    for (let i: number = 0; i < items.value.length; i++) {
+                        listItems.push({
+                            Title: items.value[i].Title,
+                            Description: items.value[i].Description,
+                            ImageUrl: items.value[i].BackgroundImageLocation.Url,
+                            LinkUrl: items.value[i].LinkLocation.Url,
+                            LaunchBehavior: items.value[i].LaunchBehavior
+                        });
+                    }
+                    this.setState({
+                        listData: listItems,
+                        loading: false,
+                        showPlaceholder: false
+                    });
+                }, (err: any) => {
+                    console.log(err);
+                });
         }
-        this.setState({ 
-          listData: listItems,
-          loading: false,
-          showPlaceholder: false
-        });
-      }, (err: any) => {
-        console.log(err);
-      });
     }
-  }
 }
 
 

@@ -15,9 +15,9 @@ import { IModernPromotedLinksWebPartProps } from './IModernPromotedLinksWebPartP
 import { SPHttpClient, SPHttpClientResponse } from '@microsoft/sp-http';
 import { Environment, EnvironmentType } from '@microsoft/sp-core-library';
 
-export interface IModernPromotedLinksWebPartProps {
-  description: string;
-}
+// export interface IModernPromotedLinksWebPartProps {
+//   description: string;
+// }
 
 export default class ModernPromotedLinksWebPart extends BaseClientSideWebPart<IModernPromotedLinksWebPartProps> {
 
