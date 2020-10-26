@@ -16,7 +16,7 @@
     float: left;
     display: block;
     height: $box-size-height;
-    width: $box-size-width;
+    width: 100%;
     position: relative;
     border: #bebebe 1px solid;
     margin: 0px 8px 8px 0px;
@@ -34,7 +34,7 @@
 
   .pLinkItemImage {
     height: $box-size-height;
-    width: $box-size-width;
+    width: 100%;
     border-radius: 10px;
   }
 
@@ -96,7 +96,7 @@
     padding: 10px;
     text-align: right;
     white-space: break-spaces;
-    font-size: 16px;
+    font-size: 14px;
   }
 
   .pLinkItemDesc {
@@ -106,7 +106,7 @@
 
   // Estilos personalizados
   .promotedListElement{
-    // width: 31.75%;
+    width: 33.33333%;
     height: 100%;
     // border: 1px solid black;
     display: inline-block;

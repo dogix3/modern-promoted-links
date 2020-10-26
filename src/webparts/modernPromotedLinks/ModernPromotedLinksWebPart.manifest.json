@@ -17,7 +17,7 @@
     "groupId": "5c03119e-3074-46fd-976b-c60198311f70", // Other
     "group": { "default": "Other" },
     "title": { "default": "Modern Promoted Links" },
-    "description": { "default": "A Promoted Links web part for the SharePoint Modern Experience." },
+    "description": { "default": "A Promoted Links for link web part for the SharePoint Modern Experience." },
     "officeFabricIconFontName": "PictureTile",
     "properties": {
       "listName": "",
