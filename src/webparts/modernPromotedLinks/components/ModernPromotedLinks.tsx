@@ -27,7 +27,7 @@ export default class ModernPromotedLinks extends React.Component<IModernPromoted
             listData: [],
             loading: false,
             showPlaceholder: (this.props.lists === null || this.props.lists === ""),
-            scrollMove: 750
+            scrollMove: 791.97
         };
     }
 
@@ -67,18 +67,18 @@ export default class ModernPromotedLinks extends React.Component<IModernPromoted
                                         description="The Promoted links list you selected does not contain items."
                                     />
                                 ) : (
-                                    <div>
+                                    <div className={this.props.lists ? this.props.lists.replace(/-/g,"") : ""}>
                                         <div>
                                             <div className={styles.dInlineBlock}>
-                                                <h3 className={styles.webpartTitle}>{this.props.description}</h3>
+                                                <h4 className={styles.webpartTitle}>{this.props.description}</h4>
                                             </div>
                                             <div className={`${styles.dInlineBlock} ${styles.fRight}`}>
-                                                <i id={"btnMoveScrollLeft"} className={`${styles.arrow} ${styles.left}`}></i>
-                                                <i id={"btnMoveScrollRigth"} className={`${styles.arrow} ${styles.right}`}></i>
+                                                <i className={`${styles.arrow} ${styles.left}`}></i>
+                                                <i className={`${styles.arrow} ${styles.right}`}></i>
                                             </div>
                                         </div>
                                         {/* <button id={"btnMoveScrollRigth"}>derecha</button> */}
-                                        <div id={"promotedListContainer"} className={`${styles.modernPromotedLinkContainer} ${styles.promotedListContainer}`}>
+                                        <div className={`promotedListContainer ${styles.modernPromotedLinkContainer} ${styles.promotedListContainer}`}>
                                             {
                                                 this.state.listData.map((item: IModernPromotedLinkDataItem) => {
                                                     return <ModernPromotedLinkItem
@@ -118,19 +118,22 @@ export default class ModernPromotedLinks extends React.Component<IModernPromoted
                 });
             }
         }
-        $('#btnMoveScrollRigth').click(() => {
-            event.preventDefault();
-            $('#promotedListContainer').animate({
-                scrollLeft: `+=${this.state.scrollMove}px`
-            }, "slow");
-        });
-
-        $('#btnMoveScrollLeft').click(() => {
-            event.preventDefault();
-            $('#promotedListContainer').animate({
-                scrollLeft: `-=${this.state.scrollMove}px`
-            }, "slow");
-        });
+        if(this.props.lists){
+            $(`.${this.props.lists.replace(/-/g,"")} .${styles.arrow}.${styles.right}`).click(() => {
+                event.preventDefault();
+                $(`.${this.props.lists.replace(/-/g,"")} .promotedListContainer`).animate({
+                    scrollLeft: `+=${this.state.scrollMove}px`
+                }, "slow");
+            });
+    
+            $(`.${this.props.lists.replace(/-/g,"")} .${styles.arrow}.${styles.left}`).click(() => {
+                event.preventDefault();
+                $(`.${this.props.lists.replace(/-/g,"")} .promotedListContainer`).animate({
+                    scrollLeft: `-=${this.state.scrollMove}px`
+                }, "slow");
+            });
+        }
+        
     }
 
     private loadData(): void {
